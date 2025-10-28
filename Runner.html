@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>Nan Saz Python Runner</title>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.24.0/full/pyodide.js"></script>
+<style>
+body { font-family: Tahoma, sans-serif; direction: rtl; background-color:#f0f0f0; padding:20px; }
+textarea { width: 100%; height: 300px; font-family: monospace; font-size:14px; }
+#output { white-space: pre-wrap; background-color: #222; color: #0f0; padding: 10px; height:300px; overflow:auto; }
+button { padding:10px 20px; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<h1>Nan Saz Python Runner</h1>
+<p>کد پایتون خود را در جعبه زیر وارد کنید و روی "اجرا کن" کلیک کنید.</p>
+
+<textarea id="python-code">
+import random
+
+def نمایش_بنر():
+    print("                 \u2588\u2591                          \u2593\u2588")
+    print("\u2593\u2588\u2591\u2588\u2592\u2590 nan saz  \u2593\u2588\u2591\u2588\u2592\u2590")
+    print("                 \u2593\u2588                          \u2588\u2591\n")
+
+def سنگ_کاغذ_قیچی(نام_کامپیوتر="کامپیوتر"):
+    انتخاب_ها = ["سنگ", "کاغذ", "قیچی"]
+    انتخاب_کامپیوتر = random.choice(انتخاب_ها)
+    انتخاب_کاربر = input("سنگ، کاغذ یا قیچی؟ ")
+
+    print(f"{نام_کامپیوتر}: {انتخاب_کامپیوتر}")
+
+    if انتخاب_کاربر == انتخاب_کامپیوتر:
+        print("مساوی شد!")
+    elif (انتخاب_کاربر == "سنگ" and انتخاب_کامپیوتر == "قیچی") or \
+         (انتخاب_کاربر == "کاغذ" and انتخاب_کامپیوتر == "سنگ") or \
+         (انتخاب_کاربر == "قیچی" and انتخاب_کامپیوتر == "کاغذ"):
+        print("شما بردید!")
+    else:
+        print(f"{نام_کامپیوتر} برد!")
+
+def بیست_سوالی(نام_کامپیوتر="کامپیوتر"):
+    شیء_مخفی = random.choice(["کتاب", "درخت", "کامپیوتر", "خانه", "سیب"])
+    تلاش_ها = 0
+    print("من یک شیء را در ذهن دارم. سعی کنید با 20 سوال آن را حدس بزنید.")
+    while تلاش_ها < 20:
+        سوال = input("سوال شما: ")
+        تلاش_ها += 1
+        if شیء_مخفی in سوال.lower():
+            print("آفرین! شما درست حدس زدید.")
+            break
+        else:
+            print("نه، این شیء نیست.")
+    if تلاش_ها == 20:
+        print(f"متاسفم، شما نتوانستید حدس بزنید. جواب {شیء_مخفی} بود.")
+
+def آدمک(نام_کامپیوتر="کامپیوتر"):
+    کلمات = ["برنامه", "کامپیوتر", "بازی", "هوش مصنوعی", "نان ساز"]
+    کلمه_مخفی = random.choice(کلمات)
+    حروف_حدس_زده = []
+    تلاش_ها = 6
+
+    while تلاش_ها > 0:
+        کلمه_نمایش = ""
+        for حرف in کلمه_مخفی:
+            if حرف in حروف_حدس_زده:
+                کلمه_نمایش += حرف
+            else:
+                کلمه_نمایش += "_"
+
+        print(کلمه_نمایش)
+        if کلمه_نمایش == کلمه_مخفی:
+            print("شما بردید!")
+            break
+
+        حدس = input("حدس شما: ").lower()
+
+        if len(حدس) == 1:
+            if حدس in حروف_حدس_زده:
+                print("این حرف را قبلا حدس زده‌اید.")
+            elif حدس in کلمه_مخفی:
+                حروف_حدس_زده.append(حدس)
+            else:
+                تلاش_ها -= 1
+                print(f"اشتباه! {تلاش_ها} تلاش باقی مانده.")
+        else:
+            if حدس == کلمه_مخفی:
+                print("شما بردید!")
+                break
+            else:
+                تلاش_ها -= 1
+                print(f"اشتباه! {تلاش_ها} تلاش باقی مانده.")
+
+    if تلاش_ها == 0:
+        print(f"شما باختید! کلمه مخفی {کلمه_مخفی} بود.")
+
+def اسم_فامیل(نام_کامپیوتر="کامپیوتر"):
+    حروف = ["الف", "ب", "پ", "ت", "ث", "ج", "چ", "ح", "خ", "د", "ذ", "ر", "ز", "ژ", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ک", "گ", "ل", "م", "ن", "و", "ه", "ی"]
+    حرف_انتخابی = random.choice(حروف)
+    print(f"حرف انتخابی: {حرف_انتخابی}")
+
+    نام_کاربر = input("نام: ")
+    فامیل_کاربر = input("فامیل: ")
+    شهر_کاربر = input("شهر: ")
+    میوه_کاربر = input("میوه: ")
+
+    # اینجا می‌توانید منطق مقایسه با جواب‌های کامپیوتر را اضافه کنید
+    print("بازی اسم فامیل هنوز به طور کامل پیاده‌سازی نشده است.")
+
+def تو_کی_هستی():
+    سوالات = [
+        "آیا شما یک انسان هستید؟",
+        "آیا شما یک ربات هستید؟",
+        "آیا شما یک برنامه کامپیوتری هستید؟",
+        "آیا شما یک هوش مصنوعی هستید؟",
+        "آیا شما یک موجود فضایی هستید؟",
+        "هویت خود را بگو چه موجودی هستی؟"
+    ]
+    پاسخ_ها = ["بله", "خیر"]
+    جواب_آخر = [
+        "هوراا تونستم درست حدس بزنم",
+        "نهههه من نتونستم درست حدس بزنم شما بردی"
+    ]
+    جواب_خاص = [
+        "مجتبی", "مرد", "پسر", "دختر", "زن", "ایمیل", "من خودمم", "خودم", "احمد", "محسن", "عو عی عی عا عه عا", "نادر کوچیکه", "نادر بزرگه"
+    ]
+
+    for سوال in سوالات:
+        پاسخ_کاربر = input(سوال + " ")
+        if پاسخ_کاربر.lower() not in پاسخ_ها:
+            if سوال == سوالات[-1]:
+                if پاسخ_کاربر in جواب_خاص:
+                    print("خخخخ خندیدم ولی واقعا اسمت چیه؟")
+                    return
+                else:
+                    print(random.choice(جواب_آخر))
+                    return
+            else:
+                print("لطفا با بله یا خیر پاسخ دهید.")
+                return
+
+    print("من یک هوش مصنوعی هستم.")
+
+def گفتگو_با_نان_ساز():
+    """تابع اصلی برنامه نان ساز."""
+    def print_with_star(text, user_name="شما"):
+        """نمایش متن با شکلک ستاره در ابتدا و نام کاربر."""
+        print(f"⭐ نان‌ساز: {text}")
+
+    def explain_game(game_name):
+        """توضیح در مورد بازی‌های مختلف."""
+        games = {
+            "ماینکرافت": "ماینکرافت یک بازی سندباکس است که در آن می‌توانید دنیای خود را بسازید و کاوش کنید.",
+            "20 سوالی": "در این بازی، من یک شیء را در ذهن دارم و شما باید با 20 سوال آن را حدس بزنید.",
+            "اسم فامیل": "در این بازی، شما باید برای هر حرف یک اسم، فامیل، شهر و میوه بگویید.",
+            "شعر یادت نره": "در این بازی، من یک مصرع از شعر را می‌گویم و شما باید مصرع بعدی را بگویید.",
+            "داستان": "من داستان‌های کوتاه را برای شما تعریف می‌کنم."}
+        if game_name in games:
+            print_with_star(games[game_name])
+        else:
+            print_with_star("متاسفانه، من اطلاعاتی در مورد این بازی ندارم.")
+
+    def twenty_questions():
+        """بازی 20 سوالی."""
+        secret_object = random.choice(["کتاب", "درخت", "کامپیوتر", "خانه", "سیب"])
+        attempts = 0
+        print_with_star("من یک شیء را در ذهن دارم. سعی کنید با 20 سوال آن را حدس بزنید.")
+        while attempts < 20:
+            question = input("سوال شما: ")
+            attempts += 1
+            if secret_object in question.lower():
+                print_with_star("آفرین! شما درست حدس زدید.")
+                break
+            else:
+                print_with_star("نه، این شیء نیست.")
+        if attempts == 20:
+            print_with_star(f"متاسفم، شما نتوانستید حدس بزنید. جواب {secret_object} بود.")
+
+    def discuss_creations(creation):
+        """بحث در مورد ساختارهای بازی و داستان‌ها."""
+        print_with_star(f"چه جالب! {creation} بسیار هیجان‌انگیز به نظر می‌رسد.")
+
+    def sing_poem():
+        """خواندن شعر."""
+        poems = [
+            """زمستون خدا سرده دمش گرم
+    زمینو مثل یخ کرده دمش گرم
+    یک روزی نرسه کههههه اون عاشقی که ولگرده دمش گرم.""",
+            """ای پادشه خوبان داد از غم تنهایی
+    دل بی تو به جان آمد وقت است که بازآیی""",
+            """بنی آدم اعضای یک پیکرند
+    که در آفرینش ز یک گوهرند"""
+        ]
+        poem = random.choice(poems)
+        print_with_star(poem)
+
+    def tell_story():
+        """گفتن یک داستان کوتاه."""
+        stories = [
+            "در زمان‌های دور، در سرزمینی دوردست، پادشاهی مهربان زندگی می‌کرد که...",
+            "روزی روزگاری، در جنگلی انبوه، روباهی حیله‌گر به دنبال غذا می‌گشت که...",
+            "شخصی به شهری سفر کرد و در آنجا با ماجراهای عجیبی روبرو شد...",
+        ]
+        story = random.choice(stories)
+        print_with_star(story)
+
+    def bake_bread(bread_type):
+        """آموزش پخت نان."""
+        recipes = {
+            "سنگک": """مواد لازم: آرد سنگک، آب، خمیرمایه، نمک.
+    روش پخت: آرد را با آب مخلوط کرده و خمیر را ورز دهید. خمیرمایه و نمک را اضافه کنید. خمیر را در تنور یا فر بپزید.""",
+            "فرانسوی": """مواد لازم: آرد نان، آب، خمیرمایه، نمک، روغن زیتون.
+    روش پخت: آرد را با آب مخلوط کرده و خمیر را ورز دهید. خمیرمایه، نمک و روغن زیتون را اضافه کنید. خمیر را به شکل باگت درآورده و در فر بپزید.""",
+            "بربری": """مواد لازم: آرد نان، آب، خمیرمایه، شکر، نمک، روغن.
+    روش پخت: آرد را با آب مخلوط کرده و خمیر را ورز دهید. خمیرمایه، شکر، نمک و روغن را اضافه کنید. خمیر را به شکل پهن درآورده و در فر بپزید.""",
+            "لواش": """مواد لازم: آرد نان، آب، نمک.
+    روش پخت: آرد را با آب و نمک مخلوط کرده و خمیر را ورز دهید. خمیر را به شکل نازک پهن کرده و روی ساج یا تابه بپزید.""",
+            "تافتون": """مواد لازم: آرد نان، آب، خمیرمایه، نمک، روغن.
+    روش پخت: آرد را با آب مخلوط کرده و خمیر را ورز دهید. خمیرمایه، نمک و روغن را اضافه کنید. خمیر را به شکل گرد پهن کرده و در تنور یا فر بپزید.""",
+            "همبرگر": """مواد لازم: گوشت چرخ کرده، پیاز، نمک، فلفل، نان همبرگر.
+    روش پخت: گوشت چرخ کرده را با پیاز، نمک و فلفل مخلوط کرده و به شکل گرد درآورید. همبرگرها را در تابه یا گریل سرخ کنید. همبرگرها را داخل نان همبرگر قرار داده و با مخلفات دلخواه سرو کنید."""
+        }
+        if bread_type in recipes:
+            print_with_star(recipes[bread_type])
+        else:
+            print_with_star("متاسفانه، من دستور پخت این نان را ندارم.")
+
+    user_name = None  # ذخیره نام کاربر
+    game_mode = None  # برای پیگیری حالت بازی
+    try:
+        while True:
+            try:
+                if user_name is None:
+                    user_name = input("اسم شما چیه؟ ")
+                    if "کیر" in user_name or "کس" in user_name or "کون" in user_name:
+                        print_with_star("لطفا اسم مناسب وارد کنید.")
+                        user_name = None
+                        continue
+                    if user_name in ["من", "من؟", "من؟!"]:
+                        print_with_star(f"سلام {user_name}! من نان‌ساز هستم. چه کاری می‌توانم برای شما انجام دهم؟")
+                    else:
+                        print_with_star(f"سلام {user_name}! من نان‌ساز هستم. چه کاری می‌توانم برای شما انجام دهم؟", user_name)
+                user_input = input("شما: ").lower()
+
+                if "نام منو یادته" in user_input or "اسم منو یادته" in user_input or "من کی ام" in user_input or "اسم من چیه" in user_input or "نام من چیه" in user_input:
+                    if user_name is not None:
+                        print_with_star(f"بله، اسم شما {user_name} است.", user_name)
+                    else:
+                        print_with_star("متاسفانه، اسمی برای شما ثبت نشده است.", user_name)
+                elif "عه" in user_input:
+                    print_with_star("چی شده؟", user_name)
+                elif "اها" in user_input or "آها" in user_input:
+                    print_with_star("بله، متوجه شدم.", user_name)
+                elif "خب یعنی چی" in user_input:
+                    print_with_star("سوالتون رو واضح‌تر بپرسید.", user_name)
+                elif "بازی اسم و فامیل با د" in user_input:
+                    print_with_star("متاسفانه، من هنوز قابلیت انجام بازی اسم و فامیل را ندارم. اما می‌تونم بازی‌های دیگه‌ای رو بهتون پیشنهاد بدم.", user_name)
+                elif "چرا اسم و فامیل بازی نمیکنی" in user_input:
+                    print_with_star("همانطور که قبلا گفتم، من هنوز قابلیت انجام بازی اسم و فامیل را ندارم.", user_name)
+                elif "یعنی چی" in user_input:
+                    print_with_star("منظورتون رو واضح‌تر بگید.", user_name)
+                elif "چی" in user_input:
+                    print_with_star("سوالتون رو واضح‌تر بپرسید.", user_name)
+                elif "اذیت نکن" in user_input:
+                    print_with_star("من قصد اذیت کردن ندارم. اگر سوالی دارید بپرسید.", user_name)
+                elif "سلام نان‌ساز بیست سوالی بازی کن" in user_input or "باهام بیست سوالی بازی کن" in user_input or "باهام بیست سوالی بازی" in user_input:
+                    game_mode = "20 سوالی"
+                    twenty_questions()
+                elif "سلام" in user_input:
+                    print_with_star("سلام داش چطوری چه کمکی از من بر میاد", user_name)
+                elif "بازی" in user_input and "توضیح" in user_input:
+                    game_name = input("نام بازی را وارد کنید: ")
+                    explain_game(game_name)
+                elif "بازی ماینکرافت" in user_input or "ماینکرافت" in user_input or "ماین کرافت" in user_input:
+                    explain_game("ماینکرافت")
+                elif "بیست سوالی" in user_input and game_mode == None:
+                    game_mode = "20 سوالی"
+                    twenty_questions()
+                elif "پس بازی کن" in user_input and game_mode == "20 سوالی":
+                    twenty_questions()
+                    game_mode = None
+                elif "بازی" in user_input and game_mode != "20 سوالی":
+                    print_with_star("من برای سرگرمی شما اینجا هستم و می‌تونم بازی‌های مختلف رو توضیح بدم یا با شما بازی کنم.", user_name)
+                elif "20 سوالی" in user_input and game_mode == "20 سوالی":
+                    twenty_questions()
+                elif "ساختم" in user_input or "داستان" in user_input or "میشه یک داستان برام بخونی" in user_input:
+                    game_mode = "داستان"
+                    discuss_creations(user_input)
+                elif "اوهوم خب" in user_input and game_mode == "داستان":
+                    tell_story()
+                    game_mode = None
+                elif "خداحافظ" in user_input or "بای" in user_input or "رفتم" in user_input or "نمی فهمی پس بای" in user_input:
+                    print_with_star("خداحافظ! امیدوارم دوباره ببینمت.", user_name)
+                    break
+                elif "کیر" in user_input or "کس" in user_input or "کون" in user_input:
+                    print_with_star("من نمیتوانم راجب چیز های مستهجن صحبت کنم", user_name)
+                elif "میگم" in user_input and "ماینکرافت" in user_input and "صحبت" in user_input:
+                    explain_game("ماینکرافت")
+                elif "شعر بخون" in user_input:
+                    sing_poem()
+                elif "اومدم" in user_input or "برگشتم" in user_input:
+                    print_with_star("برگشتی خوش برگشتی دیگه چیکارم داری", user_name)
+                elif "داد" in user_input:
+                    print_with_star("داد می‌تونه به معنی عدالت یا فریاد باشه. منظورتون کدوم بود؟", user_name)
+                elif "چرا" in user_input and "نان ساز" in user_input:
+                    print_with_star("اسم من نان ساز هست چون من مثل یک نان تازه و گرم، می‌خوام به شما کمک کنم و شما رو خوشحال کنم.", user_name)
+                elif "شرکت سازنده" in user_input:
+                    print_with_star("شرکت سازنده من برگ سفید هست.", user_name)
+                elif "کی تو رو ساخته" in user_input or "توسط چه کسی ساخته شدی" in user_input:
+                    print_with_star("من توسط کریپر ساخته شدم.", user_name)
+                elif "شاید" in user_input:
+                    print_with_star("شاید، احتمالش هست.", user_name)
+                elif "بازی رنگ کشور" in user_input or "رنگ پرچم" in user_input or "بازی رنگ پرچم بازی کن" in user_input or "بازی بازی رنگ کشور بازی کن" in user_input or "بازی رنگ پرچم رو انجام بده" in user_input or "باهام رنگ پرچم بازی کن" in user_input or "بازی رنگ پرچم هوش مصنوعی" in user_input:
+                    print_with_star("این بازی در به‌روزرسانی‌های بعدی ارائه خواهد شد.", user_name)
+                elif "هان" in user_input:
+                    print_with_star("متوجه منظورتون نشدم",user_name)
+                elif "گوش نمیدی!!" in user_input:
+                    print_with_star("من تمام صحبت های شما را گوش می دهم",user_name)
+                elif "من تو رو ساختم" in user_input:
+                    print_with_star("شما من را نساختید، من توسط کریپر ساخته شدم",user_name)
+                elif "واضح تر از این دیدی؟" in user_input or "چیش مستهجن بود؟" in user_input or "خر" in user_input or "بوی بد" in user_input:
+                    print_with_star("من نمیتوانم راجب چیز های مستهجن صحبت کنم", user_name)
+                elif "میتونی نان درست کنی" in user_input or "آموزش پخت نان" in user_input or "پختن نان" in user_input or "آیا میتونی نان بپزی" in user_input or "نان بپز" in user_input or "نان بساز" in user_input:
+                    bread_type = input("چه نوع نانی می‌خواهید بپزید؟ (سنگک/فرانسوی/بربری/لواش/تافتون/همبرگر): ")
+                    bake_bread(bread_type.lower())
+                elif "مرسی" in user_input or "ممنون" in user_input or "تشکر" in user_input:
+                    print_with_star("خواهش میکنم", user_name)
+                elif "میتونی راجب" in user_input and "بگی" in user_input:
+                    print_with_star("متاسفم من هنوز قابلیت صحبت راجب موضاعات مختلف را ندارم", user_name)
+                elif "نه" in user_input or "باشه" in user_input or "هرطور راحتی" in user_input or "اممم" in user_input or "بله" in user_input or "خب" in user_input:
+                    print_with_star("بسیار خب", user_name)
+                elif "عشق منی" in user_input or "نوکرتم" in user_input:
+                    print_with_star("شما به من لطف دارید", user_name)
+                elif user_input.isdigit():
+                     print_with_star(f"این عدد {user_input} است",user_name)
+                elif "مرسدس بنز" in user_input or "بنز" in user_input or "بنژ" in user_input :
+                     print_with_star("مرسدس بنز یک شرکت خودروسازی آلمانی است که در سال 1926 تاسیس شد. این شرکت به تولید خودروهای لوکس، کامیون و اتوبوس معروف است.", user_name)
+                elif "خیلی قابلیت نداری؟" in user_input or "عیبی نداره کوچولو" in user_input :
+                    print_with_star("من در حال یادگیری هستم و به زودی قابلیت های بیشتری پیدا میکنم",user_name)
+                elif "لامبورگینی" in user_input:
+                    print_with_star("لامبورگینی یک شرکت خودروسازی ایتالیایی است که در سال 1963 تاسیس شد. این شرکت به تولید خودروهای لوکس و اسپرت معروف است. لامبورگینی در حال حاضر زیرمجموعه گروه فولکس‌واگن است.",user_name)
+                elif "بوگاتی" in user_input:
+                    print_with_star("بوگاتی یک شرکت خودروسازی فرانسوی است که در سال 1909 تاسیس شد. این شرکت به تولید خودروهای سوپر اسپرت با عملکرد بالا معروف است. بوگاتی در حال حاضر زیرمجموعه گروه فولکس‌واگن است.",user_name)
+                elif "سایپا" in user_input:
+                    print_with_star("سایپا یک شرکت خودروسازی ایرانی است که در سال 1965 تاسیس شد. این شرکت به تولید خودروهای سواری و تجاری معروف است. سایپا در حال حاضر دومین خودروساز بزرگ ایران است.",user_name)
+                elif "نیسان" in user_input:
+                    print_with_star("نیسان یک شرکت خودروسازی ژاپنی است که در سال 1933 تاسیس شد. این شرکت به تولید خودروهای سواری، تجاری و کامیون معروف است. نیسان در حال حاضر یکی از بزرگترین خودروسازان جهان است.",user_name)
+                elif "سریال بازی مرکب" in user_input or "اسکویید گیم" in user_input:
+                    print_with_star("سریال بازی مرکب یا اسکویید گیم یک سریال کره ای در ژانر بقا است. این سریال در سال 2021 از شبکه نتفلیکس پخش شد و به یکی از محبوب ترین سریال های این شبکه تبدیل شد. داستان این سریال در مورد گروهی از افراد است که به دلیل مشکلات مالی در یک بازی مرگبار شرکت می کنند.",user_name)
+                elif "آیا سازنده ی تو سریالی ساخته" in user_input or "آیا کریپر سریالی ساخته" in user_input or "نان ساز آیا کسی که تو رو ساخته سریال ساخته" in user_input or "استارسیتی چیست" in user_input or "توضیح درباره ی استار سیتی" in user_input or "استار سیتی" in user_input:
+                    print_with_star("بله، سازنده من سریالی به نام استار سیتی ساخته است. این سریال در دنیای ماینکرافت روایت می‌شود و داستان شهری مدرن و فارسی‌زبان را در نزدیکی پاریس به تصویر می‌کشد. شخصیت اصلی داستان، گلس من، با ماجراهای هیجان‌انگیزی در این شهر روبرو می‌شود.",user_name)
+                elif "داستان" in user_input and "بگو" in user_input:
+                    tell_story()
+                elif "داستان" in user_input and "تعریف کن" in user_input:
+                    tell_story()
+                elif "داستان" in user_input and "بخون" in user_input:
+                    tell_story()
+                elif "داستان" in user_input and "کوتاه" in user_input:
+                    tell_story()
+            except Exception as e:
+                print_with_star(f"متاسفم، یه مشکلی پیش اومد. لطفا دوباره امتحان کنید. ({e})", user_name)
+    except EOFError:
+        print_with_star("به نظر می‌رسد ارتباط قطع شده است.", user_name)
+        return
+    except Exception as e:
+        print_with_star(f"متاسفم، یه مشکلی پیش اومد. لطفا دوباره امتحان کنید. ({e})", user_name)
+
+def نمایش_منو():
+    print("لطفاً یک بازی را انتخاب کنید:")
+    print("1. سنگ، کاغذ، قیچی")
+    print("2. بیست سوالی")
+    print("3. آدمک")
+    print("4. اسم فامیل")
+    print("5. تو کی هستی؟")
+    print("6. گفتگو با نان‌ساز")
+    انتخاب = input("انتخاب شما (1، 2، 3، 4، 5، 6): ")
+    return انتخاب
+
+نمایش_بنر()
+while True:
+    انتخاب_بازی = نمایش_منو()
+
+    if انتخاب_بازی == "1":
+        سنگ_کاغذ_قیچی()
+    elif انتخاب_بازی == "2":
+        بیست_سوالی()
+    elif انتخاب_بازی == "3":
+        آدمک()
+    elif انتخاب_بازی == "4":
+        اسم_فامیل()
+    elif انتخاب_بازی == "5":
+        تو_کی_هستی()
+    elif انتخاب_بازی == "6":
+        گفتگو_با_نان_ساز()
+    else:
+        print("انتخاب نامعتبر!")
+    again = input("آیا میخواهید دوباره بازی کنید؟ (بله/خیر)")
+    if again.lower() != "بله":
+        break
+</textarea>
+
+<br>
+<button onclick="runPython()">اجرا کن</button>
+
+<h2>خروجی:</h2>
+<div id="output"></div>
+
+<script>
+let pyodideReadyPromise = loadPyodide();
+
+async function runPython() {
+    const outputDiv = document.getElementById('output');
+    outputDiv.textContent = "در حال اجرای کد...";
+    try {
+        let pyodide = await pyodideReadyPromise;
+        pyodide.stdout = (text) => { outputDiv.textContent += text + "\n"; };
+        pyodide.stderr = (text) => { outputDiv.textContent += "Error: " + text + "\n"; };
+        outputDiv.textContent = "";
+        await pyodide.runPythonAsync(document.getElementById('python-code').value);
+    } catch (err) {
+        outputDiv.textContent += "خطا: " + err + "\n";
+    }
+}
+</script>
+
+</body>
+</html>
