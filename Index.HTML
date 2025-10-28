@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دانلود فایل هوش مصنوعی نان ساز - یک ربات تعاملی پایتون</title>
+    <style>
+        body {
+            font-family: 'Far_Sina_BD', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: white; /* رنگ پس زمینه اولیه */
+            text-align: center;
+        }
+        @font-face {
+            font-family: 'Far_Sina_BD';
+            src: url('https://www.fontiran.com/media/fonts/eot/Far_Sina_BD.eot');
+            src: url('https://www.fontiran.com/media/fonts/eot/Far_Sina_BD.eot?#iefix') format('embedded-opentype'),
+                 url('https://www.fontiran.com/media/fonts/woff2/Far_Sina_BD.woff2') format('woff2'),
+                 url('https://www.fontiran.com/media/fonts/woff/Far_Sina_BD.woff') format('woff'),
+                 url('https://www.fontiran.com/media/fonts/ttf/Far_Sina_BD.ttf') format('truetype');
+            font-weight: bold;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        a:hover {
+            background-color: #45a049;
+        }
+        div {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        ul {
+            text-align: left;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        dt {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        dd {
+            margin-bottom: 10px;
+        }
+        .verified {
+            font-weight: bold;
+        }
+        .verified-img {
+            height: 20px;
+            width: auto;
+            display: inline-block;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+        .screenshot {
+            width: 300px;
+            height: auto;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .screenshots-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .blue-title {
+            color: #0000FF;
+            font-weight: bold;
+        }
+        #game-container {
+            margin-top: 20px;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        #game-canvas {
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            display: block;
+            margin: 0 auto;
+        }
+        #game-controls {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .game-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .game-button:hover {
+            background-color: #45a049;
+        }
+        .game-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    </style>
+    <script>
+        //<![CDATA[
+        window.onload = function () {
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+            const startButton = document.getElementById('start-button');
+            const pauseButton = document.getElementById('pause-button');
+            const resizeButton = document.getElementById('resize-button');
+            let gameRunning = false;
+            let animationFrameId;
+            let paddleHeight = 10;
+            let paddleWidth = 75;
+            let paddleX = (canvas.width - paddleWidth) / 2;
+            let rightPressed = false;
+            let leftPressed = false;
+            let ballRadius = 10;
+            let x = canvas.width / 2;
+            let y = canvas.height - 30;
+            let dx = 3;
+            let dy = -3;
+            let score = 0;
+            let lives = 3;
+            let initialDifficulty = 1;
+            let speedMultiplier = 1;
+            let brickRowCount = 3;
+            let brickColumnCount = 8;
+            let brickWidth = 75;
+            let brickHeight = 20;
+            let brickPadding = 10;
+            let brickOffsetTop = 30;
+            let brickOffsetLeft = 30;
+            let bricks = [];
+            const brickColors = ['#0095DD', '#4CAF50', '#FFC300', '#FF4500']; // رنگهای مختلف برای آجرها
+
+            function resizeCanvas() {
+                const container = document.getElementById('game-container');
+                const maxWidth = container.clientWidth;
+                const maxHeight = window.innerHeight * 0.6;
+                let width = maxWidth;
+                let height = maxHeight;
+                if (width > height) {
+                    width = height;
+                } else {
+                    height = width;
+                }
+                width = Math.min(width, maxWidth);
+                height = Math.min(height, maxHeight);
+                canvas.width = width;
+                canvas.height = height;
+                initializeBricks(); // call initializeBricks after canvas resize
+            }
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            function initializeBricks() {
+                bricks = [];
+                for (let c = 0; c < brickColumnCount; c++) {
+                    bricks[c] = [];
+                    for (let r = 0; r < brickRowCount; r++) {
+                        bricks[c][r] = { x: 0, y: 0, status: 1, color: brickColors[Math.floor(Math.random() * brickColors.length)] };
+                    }
+                }
+            }
+
+            initializeBricks();
+
+            function drawBricks() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    for (let r = 0; r < brickRowCount; r++) {
+                        if (bricks[c][r].status === 1) {
+                            const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+                            const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+                            bricks[c][r].x = brickX;
+                            bricks[c][r].y = brickY;
+                            ctx.beginPath();
+                            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                            ctx.fillStyle= bricks[c][r].color;
+                            ctx.fill();
+                            ctx.closePath();
+                        }
+                    }
+                }
+            }
+
+            function drawBall() {
+                ctx.beginPath();
+                ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+                ctx.fillStyle = '#0095DD';
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            function drawPaddle() {
+                ctx.beginPath();
+                ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+                ctx.fillStyle = '#0095DD';
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            function drawScore() {
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#0095DD';
+                ctx.fillText('Score: ' + score, 8, 20);
+            }
+
+            function drawLives() {
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#0095DD';
+                ctx.fillText('Lives: ' + lives, canvas.width - 65, 20);
+            }
+
+            function collisionDetection() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    for (let r = 0; r < brickRowCount; r++) {
+                        const b = bricks[c][r];
+                        if (b.status === 1) {
+                            if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                                dy = -dy;
+                                b.status = 0;
+                                score++;
+                                if (score === brickRowCount * brickColumnCount) {
+                                    alert('YOU WIN, CONGRATULATIONS!');
+                                    document.location.reload();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawBricks();
+                drawBall();
+                drawPaddle();
+                drawScore();
+                drawLives();
+                collisionDetection();
+
+                if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+                    dx = -dx;
+                }
+                if (y + dy < ballRadius) {
+                    dy = -dy;
+                } else if (y + dy > canvas.height - ballRadius) {
+                    if (x > paddleX && x < paddleX + paddleWidth) {
+                        dy = -dy;
+                    } else {
+                        lives--;
+                        if (!lives) {
+                            alert('GAME OVER');
+                            document.location.reload();
+                        } else {
+                            x = canvas.width / 2;
+                            y = canvas.height - 30;
+                            dx = 3;
+                            dy = -3;
+                            paddleX = (canvas.width - paddleWidth) / 2;
+                        }
+                    }
+                }
+
+                if (rightPressed && paddleX < canvas.width - paddleWidth) {
+                    paddleX += 7;
+                } else if (leftPressed && paddleX > 0) {
+                    paddleX -= 7;
+                }
+
+                x += dx;
+                y += dy;
+                if (gameRunning) {
+                    animationFrameId = requestAnimationFrame(draw);
+                }
+            }
+
+            function keyDownHandler(e) {
+                if (e.key === 'Right' || e.key === 'ArrowRight') {
+                    rightPressed = true;
+                } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                    leftPressed = true;
+                }
+            }
+
+            function keyUpHandler(e) {
+                if (e.key === 'Right' || e.key === 'ArrowRight') {
+                    rightPressed = false;
+                } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                    leftPressed = false;
+                }
+            }
+
+            function startGame() {
+                gameRunning = true;
+                startButton.disabled = true;
+                pauseButton.disabled = false;
+                draw();
+            }
+
+            function pauseGame() {
+                gameRunning = false;
+                startButton.disabled = false;
+                pauseButton.disabled = true;
+                cancelAnimationFrame(animationFrameId);
+            }
+
+            document.addEventListener('keydown', keyDownHandler, false);
+            document.addEventListener('keyup', keyUpHandler, false);
+            startButton.addEventListener('click', startGame);
+            pauseButton.addEventListener('click', pauseGame);
+
+            resizeButton.addEventListener('click', resizeCanvas);
+            pauseButton.disabled = true;
+        }
+        //]]>
+    </script>
+</head>
+<body>
+    <h1>دانلود فایل هوش مصنوعی نان ساز - یک ربات تعاملی پایتون</h1>
+    <p style="font-family: 'Far_Sina_BD';">مرسی که ما رو توی روبیکا نگاه میکنید، امیدوارم این فایل جذاب باشه:</p>
+    <a href="https://rubika.ir/nether456creeper" style="font-family: 'Far_Sina_BD';">لینک روبیکا</a>
+    <video src="https://s6.uupload.ir/files/inshot_20250327_041822956_nivo.gif" alt="گیف شرکت" width="200" height="100" autoplay loop muted></video>
+    <p style="font-family: 'Far_Sina_BD';">
+        این فایل یک ربات تعاملی پایتون است که با نام "نان ساز" شناخته می‌شود. این ربات می‌تواند به سوالات شما پاسخ دهد، بازی‌های مختلف را توضیح دهد، با شما بازی کند و حتی شعر بخواند!
+    </p>
+    <p style="font-family: 'Far_Sina_BD';">برای دانلود فایل هوش مصنوعی نان ساز، روی لینک زیر کلیک کنید:</p>
+    <a href="https://uupload.ir/view/saz_nan_new.py_ksgm.zip/" download style="font-family: 'Far_Sina_BD';">دانلود فایل هوش مصنوعی نان ساز</a>
+    <img src="https://s6.uupload.ir/files/عکس_نان_ساز_هوش_مصنوعی_54gi.jpg" alt="تصویر نان ساز">
+    <div style="font-family: 'Far_Sina_BD';">
+        <p><b>نحوه استفاده:</b></p>
+        <p>
+            پس از دانلود، مراحل زیر را دنبال کنید:
+        </p>
+        <ul>
+            <li>فایل دانلود شده با فرمت .zip را در فایل منیجر خود پیدا کنید.</li>
+            <li>آن را از حالت فشرده خارج کنید. (با استفاده از ابزار استخراج فایل در اندروید)</li>
+            <li><b>توجه:</b> فایل zip حاوی دو نسخه از ربات نان ساز است: نسخه 1.00 و نسخه 1.7.</li>
+            <li>فایل .py استخراج شده (هر کدام از نسخه‌ها) را با برنامه Pydroid 3 باز کنید. (از گوگل پلی قابل دانلود است)</li>
+             <li><b>نکته مهم:</b> برای اجرای صحیح، مطمئن شوید که Pydroid 3 به درستی نصب شده و مجوزهای لازم را دارد.  اگر بازی بعد از زدن دکمه شروع، شروع نشد، یک بار صفحه را رفرش کنید.</li>
+            <li>برنامه را اجرا کنید و با ربات "نان ساز" تعامل کنید!</li>
+        </ul>
+    </div>
+    <div class="screenshots-container" style="font-family: 'Far_Sina_BD';">
+        <h2 class="blue-title">برخی از کار های نان ساز</h2>
+        <img src="https://s6.uupload.ir/files/screenshot_2025-03-24-22-28-40-159_ru.iiec.pydroid3_jq4u.jpg" alt="Screenshot 1" class="screenshot">
+        <img src="https://s6.uupload.ir/files/screenshot_2025-03-24-22-30-55-171_ru.iiec.pydroid3_nkuc.jpg" alt="Screenshot 2" class="screenshot">
+        <img src="https://s6.uupload.ir/files/screenshot_2025-03-24-22-16-57-111_ru.iiec.pydroid3_bkae.jpg" alt="Screenshot 3" class="screenshot">
+    </div>
+    <div style="font-family: 'Far_Sina_BD';">
+        <p><b>سوالات متداول (FAQ):</b></p>
+<dl>
+<dt>سوال 1: ربات نان ساز چه قابلیت‌هایی دارد؟</dt>
+<dd>پاسخ 1: ربات نان ساز می‌تواند به سوالات شما پاسخ دهد، بازی‌های مختلف را توضیح دهد، با شما بازی کند و حتی شعر بخواند!</dd>
+<dt>سوال 2: چگونه می‌توانم از ربات نان ساز استفاده کنم؟</dt>
+<dd>پاسخ 2: پس از دانلود فایل zip شده، آن را از حالت فشرده خارج کرده و فایل .py استخراج شده را با برنامه Pydroid 3 اجرا کنید.</dd>
+<dt>سوال 3: آیا ربات نان ساز رایگان است؟</dt>
+<dd>پاسخ 3: بله، ربات نان ساز کاملاً رایگان است.</dd>
+<dt>سوال 4: آیا ربات نان ساز به اینترنت نیاز دارد؟</dt>
+<dd>پاسخ 4: خیر، ربات نان ساز به اینترنت نیاز ندارد.</dd>
+<dt>سوال 5: آیا ربات نان ساز می‌تواند بازی‌های دیگری را نیز توضیح دهد؟</dt>
+<dd>پاسخ 5: بله، ربات نان ساز می‌تواند بازی‌های مختلفی را توضیح دهد. برای این کار، نام بازی را به ربات بگویید.</dd>
+<dt>سوال 6: آیا ربات نان ساز می‌تواند شعر دیگری نیز بخواند؟</dt>
+<dd>پاسخ 6: بله، ربات نان ساز می‌تواند شعرهای مختلفی را بخواند. برای این کار، از ربات بخواهید که شعر بخواند.</dd>
+<dt>سوال 7: آیا ربات نان ساز می‌تواند به سوالات پیچیده پاسخ دهد؟</dt>
+<dd>پاسخ 7: ربات نان ساز در حال حاضر نمی‌تواند به سوالات پیچیده پاسخ دهد. اما در آینده، قابلیت‌های بیشتری به آن اضافه خواهد شد.</dd>
+<dt>سوال 8: آیا ربات نان ساز می‌تواند با من بازی کند؟</dt>
+<dd>پاسخ 8: بله، ربات نان ساز می‌تواند با شما بازی 20 سوالی را انجام دهد.</dd>
+<dt>سوال 9: آیا ربات نان ساز می‌تواند داستان‌های من را بشنود؟</dt>
+<dd>پاسخ 9: بله، ربات نان ساز می‌تواند داستان‌های شما را بشنود و در مورد آنها بحث کند.</dd>
+<dt>سوال 10: آیا ربات نان ساز می‌تواند نام من را به خاطر بسپارد؟</dt>
+<dd>پاسخ 10: بله، ربات نان ساز می‌تواند نام شما را به خاطر بسپارد و در پاسخ‌های خود از آن استفاده کند.</dd>
+<dt>سوال 11: چرا ربات نان ساز به بعضی سوال ها جواب نمی‌دهد؟</dt>
+<dd>پاسخ 11: چون هنوز کامل نیست و کتابخانه ی ntkx به زودی روی او نصب شده و میتواند به این سوال ها پاسخ دهد.</dd>
+<dt>سوال 12: آیا ربات نان ساز واقعا به ما نان میدهد؟</dt>
+<dd>پاسخ 12: خیر ربات نان ساز مثل یک نانوا و دستگاه نان سازی به شما مثل برق و باد کمک میکند.</dd>
+<dt>سوال 13: آیا ربات نان ساز بوی نان میدهد؟</dt>
+<dd>پاسخ 13: خیر چرا یک ربات باید بو بدهد.</dd>
+<dt>سوال 14: آیا برای اجرای ربات نان ساز به سخت افزار خاصی نیاز دارم؟</dt>
+<dd>پاسخ 14: برای اجرای ربات نان ساز به یک گوشی اندرویدی با برنامه Pydroid 3 یا یک محیط پایتون مشابه نیاز دارید.</dd>
+<dt>سوال 15: آیا می توانم از ربات نان ساز در پروژه‌های دیگرم استفاده کنم؟</dt>
+<dd>پاسخ 15: بله، شما می توانید از ربات نان ساز در پروژه‌های خود استفاده کنید، اما لطفاً به حقوق سازنده احترام بگذارید.</dd>
+<dt>سوال 16: آیا ربات نان ساز از زبان فارسی پشتیبانی می کند؟</dt>
+<dd>پاسخ 16: بله، ربات نان ساز به طور کامل از زبان فارسی پشتیبانی می کند.</dd>
+<dt>سوال 17: آیا محدودیتی در تعداد سوالاتی که می توانم از ربات نان ساز بپرسم وجود دارد؟</dt>
+<dd>پاسخ 17: هیچ محدودیتی در تعداد سوالاتی که می توانید از ربات نان ساز بپرسید وجود ندارد.</dd>
+<dt>سوال 18: آیا ربات نان ساز می تواند به صورت آفلاین کار کند؟</dt>
+<dd>پاسخ 18: بله، ربات نان ساز می تواند به صورت آفلاین کار کند.</dd>
+<dt>سوال 19: آیا ربات نان ساز قابلیت یادگیری دارد؟</dt>
+<dd>پاسخ 19: ربات نان ساز در حال حاضر قابلیت یادگیری ندارد، اما این قابلیت ممکن است در آینده به آن اضافه شود.</dd>
+<dt>سوال 20: چگونه می توانم ربات نان ساز را به روز کنم؟</dt>
+<dd>پاسخ 20: برای به روز رسانی ربات نان ساز، باید نسخه جدید آن را از همین صفحه دانلود و نصب کنید.</dd>
+<dt>سوال 21: آیا این وبسایت به روز رسانی می شود؟</dt>
+<dd>پاسخ 21: بله، این وبسایت به طور مرتب به روز رسانی می شود تا بهترین تجربه را برای شما فراهم کند و مشکلات احتمالی را رفع کند.</dd>
+<dt>سوال 22: آیا ربات نان ساز می تواند به سوالات مربوط به تاریخ پاسخ دهد؟</dt>
+<dd>پاسخ 22: ربات نان ساز می تواند به برخی از سوالات مربوط به تاریخ پاسخ دهد، اما دقت آن ممکن است کامل نباشد.</dd>
+<dt>سوال 23: آیا ربات نان ساز می تواند به سوالات مربوط به جغرافیا پاسخ دهد؟</dt>
+<dd>پاسخ 23: ربات نان ساز می تواند به برخی از سوالات مربوط به جغرافیا پاسخ دهد، اما دقت آن ممکن است کامل نباشد.</dd>
+<dt>سوال 24: آیا ربات نان ساز می تواند به سوالات مربوط به علوم پاسخ دهد؟</dt>
+<dd>پاسخ 24: ربات نان ساز می تواند به برخی از سوالات مربوط به علوم پاسخ دهد، اما دقت آن ممکن است کامل نباشد.</dd>
+<dt>سوال 25: آیا ربات نان ساز می تواند به سوالات مربوط به ورزش پاسخ دهد؟</dt>
+<dd>پاسخ 25: برخی از سوالات مربوط به ورزش پاسخ دهد، اما دقت آن ممکن است کامل نباشد.</dd>
+<dt>سوال 26: آیا ربات نان ساز می تواند به سوالات مربوط به فیلم ها و سریال ها پاسخ دهد؟</dt>
+<dd>پاسخ 26: ربات نان ساز می تواند به برخی از سوالات مربوط به فیلم ها و سریال ها پاسخ دهد، اما دقت آن ممکن است کامل نباشد.</dd>
+<dt>سوال 27: آیا ربات نان ساز می تواند به سوالات مربوط به موسیقی پاسخ دهد؟</dt>
+<dd>پاسخ 27: ربات نان ساز می تواند به برخی از سوالات مربوط به موسیقی پاسخ دهد، اما دقت آن ممکن است کامل نباشد.</dd>
+<dt>سوال 28: آیا ربات نان ساز می تواند به سوالات مربوط به کتاب ها پاسخ دهد؟</dt>
+<dd>پاسخ 28: ربات نان ساز می تواند به برخی از سوالات مربوط به کتاب ها پاسخ دهد، اما دقت آن ممکن است کامل نباشد.</dd>
+<dt>سوال 29: آیا ربات نان ساز می تواند به سوالات مربوط به بازی های ویدیویی پاسخ دهد؟</dt>
+<dd>پاسخ 29: ربات نان ساز می تواند به برخی از سوالات مربوط به بازی های ویدیویی پاسخ دهد، اما دقتآن ممکن است کامل نباشد.</dd>
+<dt>سوال 30: آیا ربات نان ساز می تواند به سوالات مربوط به اخبار روز پاسخ دهد؟</dt>
+<dd>پاسخ 30
